@@ -1,0 +1,15 @@
+<div class="row">
+    {{#each model as |tile|}}
+    <div class="col-sm-4">
+        <div class="card">
+            <a href="{{tile.url}}">
+                <div class="card-body" style="width: 15rem;height:10rem;">
+                    {{tile.name}}
+                </div>
+            </a>
+        </div>
+    </div>
+    {{/each}}
+</div>
+{{outlet}}
+

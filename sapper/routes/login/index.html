@@ -1,0 +1,59 @@
+<svelte:head>
+    <title>Login</title>
+</svelte:head>
+
+<form on:submit="handleSubmit(event)">
+    <div class="form-group col-sm-4">
+        <label>Username</label>
+        <input bind:value="username" type="text" class="form-control" placeholder="Username">
+    </div>
+    <div class="form-group col-sm-4">
+        <label>Password</label>
+        <input bind:value="password" type="password" class="form-control" placeholder="Password">
+    </div>
+    <div class="form-group col-sm-4">
+        <button type="submit" class="btn btn-primary">
+            Login
+        </button>
+    </div>
+</form>
+
+<script>
+    import { goto } from 'sapper/runtime.js';
+
+    export default {
+        components: {
+        },
+        data() {
+            return {
+                username: '',
+                password: ''
+            };
+        },
+        methods: {
+            handleSubmit(event) {
+                // prevent the page from reloading
+                event.preventDefault();
+
+                const { username, password } = this.get();
+
+                fetch('http://localhost:4000/authenticate', {
+                    body: JSON.stringify({ username, password }),
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json; charset=UTF-8'
+                    }
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then((data) => {
+                    localStorage.setItem('token', data.token);
+                    goto('');
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+        }
+    };
+</script>

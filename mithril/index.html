@@ -1,0 +1,114 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Mithril</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1">Launchpad</span>
+    </nav>
+
+    <div id="content" class="container"></div>
+
+    <script src="./js/mithril.min.js"></script>
+
+    <script>
+        var root = document.getElementById("content");
+
+        var Main = {
+            tiles: [],
+            oninit: function () {
+                // budget version authentication check
+                if (!localStorage.getItem('token')) {
+                    m.route.set("/login");
+                    return;
+                }
+
+                // fetch tiles
+                m.request({
+                    method: "GET",
+                    url: "http://localhost:4000/tiles"
+                }).then(function success(r) {
+                    Main.tiles = r.tiles;
+                });
+            },
+            view: function () {
+                return m("div",
+                    [
+                        m(".row", Main.tiles.map(function (item) {
+                            return m(".col-sm-4", [
+                                m(".card", [
+                                    m("a[href=/" + item.url + "]", { oncreate: m.route.link }, "", [
+                                        m(".card-body", { style: "width: 15rem;height:10rem;" }, item.name)
+                                    ])
+                                ])
+                            ]);
+                        }))
+                    ]
+                );
+            }
+        }
+
+        var Auth = {
+            username: "",
+            password: "",
+
+            setUsername: function (value) {
+                Auth.username = value;
+            },
+            setPassword: function (value) {
+                Auth.password = value;
+            },
+            login: function () {
+                m.request({
+                    method: "POST",
+                    url: "http://localhost:4000/authenticate",
+                    data: { username: Auth.username, password: Auth.password }
+                }).then(function success(data) {
+                    localStorage.setItem("token", data.token);
+                    m.route.set("/");
+                },
+                function error(data) {
+                    console.log('error');
+                });
+            }
+        }
+
+        var Login = {
+            view: function (vnode) {
+                return m("form", [
+                    m(".form-group.col-sm-4", [
+                        m("label", "Username"),
+                        m("input[type=text]", { oninput: m.withAttr("value", Auth.setUsername), value: Auth.username, placeholder: "Username", class: "form-control" }),
+                    ]),
+                    m(".form-group.col-sm-4", [
+                        m("label", "Password"),
+                        m("input[type=password]", { oninput: m.withAttr("value", Auth.setPassword), value: Auth.password, placeholder: "Password", class: "form-control" }),
+                    ]),
+                    m(".form-group.col-sm-4", [
+                        m("button[type=button]", {
+                            class: "btn btn-primary", onclick: function () {
+                                Auth.login();
+                            }
+                        }, "Login")
+                    ])
+                ])
+            }
+        }
+
+        m.route(root, "/", {
+            "/": Main,
+            "/login": Login
+        });
+
+    </script>
+</body>
+
+</html>

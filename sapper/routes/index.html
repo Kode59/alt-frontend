@@ -1,0 +1,38 @@
+<svelte:head>
+    <title>Sapper project template</title>
+</svelte:head>
+
+<div class="row">
+    {#each data.tiles as item}
+    <div class="col-sm-4">
+        <div class="card">
+            <a href="{item.url}">
+                <div class="card-body" style="width: 15rem;height:10rem;">
+                    {item.name}
+                </div>
+            </a>
+        </div>
+    </div>
+    {/each}
+</div>
+
+<script>
+
+    export default {
+        components: {
+        },
+
+        preload({ params, session }) {
+
+            if (!localStorage.getItem('token')) {
+                this.redirect(401, 'login');
+            } else {
+                return this.fetch('http://localhost:4000/tiles')
+                .then((r) => r.json())
+                .then((data) => {
+                    return { data };
+                });
+            }
+        }
+    };
+</script>

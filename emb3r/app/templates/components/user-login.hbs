@@ -1,0 +1,14 @@
+<div class="form-group col-sm-4">
+  <label>Username</label>
+  {{input type="text" value=username class="form-control" placeholder="Username"}}
+</div>
+<div class="form-group col-sm-4">
+  <label>Password</label>
+  {{input type="password" value=password class="form-control" placeholder="Password" }}
+</div>
+<div class="form-group col-sm-4">
+  <button type="button" class="btn btn-primary" {{action 'login'}}>
+    Login
+  </button>
+</div>
+{{yield}}

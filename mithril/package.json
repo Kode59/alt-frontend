@@ -1,0 +1,13 @@
+{
+  "name": "tiles-mithril",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "start": "start index.html"
+  },
+  "author": "Mads Tordal",
+  "license": "MIT",
+  "dependencies": {
+    "mithril": "^1.1.6"
+  }
+}
